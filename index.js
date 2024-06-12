@@ -11,6 +11,16 @@ gameCanvas.height = 574;
 ctx.fillStyle = 'white';
 ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
 
+// 5. (Canvas) Set the map image through html 
+const image = new Image();
+image.src = './assets/map.png';
+image.onload = () => {
+    const scaleFactor = 3.5;
+    ctx.translate(-730, -370);
+    ctx.scale(scaleFactor, scaleFactor);
+    ctx.drawImage(image, 0, 0, gameCanvas.width, gameCanvas.height);
+};
+
 // testing the canvas and context
 console.log(ctx);
 console.log(gameCanvas);
