@@ -7,7 +7,7 @@ const ctx = gameCanvas.getContext('2d');
 gameCanvas.width = 1024;
 gameCanvas.height = 574;
 
-// 4. (Canvas) Set the background color and fill the canvas
+// 4. (Canvas) Set the background color and draw the canvas
 ctx.fillStyle = 'white';
 ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
 
