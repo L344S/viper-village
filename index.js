@@ -161,3 +161,4 @@ console.log(ctx);
 console.log(player);
 console.log(gameCanvas);
 console.log(keys);
+console.log(collisions);
