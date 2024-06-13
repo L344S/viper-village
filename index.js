@@ -39,7 +39,7 @@ const playerPromise = new Promise((resolve, reject) => {
 Promise.all([mapPromise, playerPromise]).then(() => {
     // draw the mal without scaling factor for performance purposes
     ctx.drawImage(map, -1100, -550);
-    // draw the player, crop the sprite and scale it
+    // draw the player, crop the sprite and scale it up
     ctx.drawImage(
     player,
     0,
