@@ -26,11 +26,32 @@ class visual {
   }
   move() {
     // draw the map without scaling factor for performance purposes
-    ctx.drawImage(this.image, -1100, -550);
+    ctx.drawImage(this.image, this.position.x, this.position.y);
   }
 }
-const mapBackground = new visual({ position: { x: 0, y: 0 }, image: map });
+const mapBackground = new visual({
+  position: {
+    x: -1100,
+    y: -550,
+  },
+  image: map,
+});
 
+// 10. (Canvas) Create an object to store the keys pressed
+const keys = {
+  ArrowUp: {
+    pressed: false,
+  },
+  ArrowDown: {
+    pressed: false,
+  },
+  ArrowLeft: {
+    pressed: false,
+  },
+  ArrowRight: {
+    pressed: false,
+  },
+};
 // 7. (Canvas) Draw the map image and the player image on the canvas
 // 12-08-2024 : had to use promises to load the images before drawing them on the canvas otherwise the player image was not being drawn
 // Each promise will resolve when the image is loaded successfully
@@ -73,40 +94,60 @@ function play() {
     .catch(() => {
       console.error("one of the images failed to load");
     });
+  if (keys.ArrowUp.pressed && lastKeyPressed === "ArrowUp") {
+    mapBackground.position.y += 3;
+  } else if (keys.ArrowDown.pressed && lastKeyPressed === "ArrowDown") {
+    mapBackground.position.y -= 3;
+  } else if (keys.ArrowLeft.pressed && lastKeyPressed === "ArrowLeft") {
+    mapBackground.position.x += 3;
+  } else if (keys.ArrowRight.pressed && lastKeyPressed === "ArrowRight") {
+    mapBackground.position.x -= 3;
+  }
 }
 play();
 
-// 10. (Canvas) Create an object to store the keys pressed
-const keys = {
-  ArrowUp: {
-    pressed: false,
-  },
-  ArrowDown: {
-    pressed: false,
-  },
-  ArrowLeft: {
-    pressed: false,
-  },
-  ArrowRight: {
-    pressed: false,
-  },
-};
-
+let lastKeyPressed = "";
 // 8. (Canvas) Move the player image on the canvas
 window.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "ArrowUp":
       // if i press the up arrow key, the key object will be updated
       keys.ArrowUp.pressed = true;
+      lastKeyPressed = "ArrowUp";
       break;
     case "ArrowDown":
       keys.ArrowDown.pressed = true;
+      lastKeyPressed = "ArrowDown";
       break;
     case "ArrowLeft":
       keys.ArrowLeft.pressed = true;
+      lastKeyPressed = "ArrowLeft";
       break;
     case "ArrowRight":
       keys.ArrowRight.pressed = true;
+      lastKeyPressed = "ArrowRight";
+      break;
+    default:
+      break;
+  }
+  // check the keys object if they are being updated
+  console.log(keys);
+});
+// 11. (Canvas) Set the keyup event listener to stop the player image from moving when the key is released
+window.addEventListener("keyup", (event) => {
+  switch (event.key) {
+    case "ArrowUp":
+      // if i press the up arrow key, the key object will be updated
+      keys.ArrowUp.pressed = false;
+      break;
+    case "ArrowDown":
+      keys.ArrowDown.pressed = false;
+      break;
+    case "ArrowLeft":
+      keys.ArrowLeft.pressed = false;
+      break;
+    case "ArrowRight":
+      keys.ArrowRight.pressed = false;
       break;
     default:
       break;
