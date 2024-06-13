@@ -7,9 +7,17 @@ const ctx = gameCanvas.getContext("2d");
 gameCanvas.width = 1024;
 gameCanvas.height = 574;
 
-// 4. (Canvas) Set the background color and draw the canvas
+// 12. Create a 2D array to store the map collisions slice by 90 (number of tiles in a row)
+mapCollisions = [];
+for (let i = 0; i < collisions.length; i += 90) {
+  mapCollisions.push(collisions.slice(i, 90 + i));
+}
+console.log(mapCollisions);
+
+/* 4. (Canvas) Set the background color and draw the canvas
 ctx.fillStyle = "white";
 ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+*/
 
 // 5. (Canvas) Set the map image through html
 const map = new Image();
