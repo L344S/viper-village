@@ -16,11 +16,10 @@ const map = new Image();
 map.src = './assets/map.png';
 // 6. (Canvas) Set the player image through html
 const player = new Image();
-player.src = './assets/player.png';
+player.src = './assets/player_walk_down.png';
 
 // 7. (Canvas) Draw the map image and the player image on the canvas
 // 12-08-2024 : had to use promises to load the images before drawing them on the canvas otherwise the player image was not being drawn
-const scaleFactor = 3.5;
 // Each promise will resolve when the image is loaded successfully
 const mapPromise = new Promise((resolve, reject) => {
     map.onload = () => {
@@ -38,10 +37,21 @@ const playerPromise = new Promise((resolve, reject) => {
 });
 // Promise.all() will resolve when all promises are resolved
 Promise.all([mapPromise, playerPromise]).then(() => {
-    ctx.translate(-730, -370);
-    ctx.scale(scaleFactor, scaleFactor);
-    ctx.drawImage(map, 0, 0, gameCanvas.width, gameCanvas.height);
-    ctx.drawImage(player, gameCanvas.width / (2 * scaleFactor), gameCanvas.height / (2 * scaleFactor));
+    // draw the mal without scaling factor for performance purposes
+    ctx.drawImage(map, -1100, -550);
+    // draw the player, crop the sprite and scale it
+    ctx.drawImage(
+    player,
+    0,
+    0,
+    player.width / 4,
+    player.height,
+    // corodinates to draw the player
+    455,
+    350,
+    player.width * 0.75, // triple the width
+    player.height * 3 // triple the height
+);
 }).catch(() => {
     console.error('one of the images failed to load');
 });
