@@ -526,11 +526,13 @@ function preload() {
 
 function create() {
   // Draw the map, set the dimensions and scale (0.9 to fit the screen)
-this.add.image(1140, 740, "map").setScale(0.938); // NEVER TOUCH THIS LINE
+  this.add.image(1140, 740, "map").setScale(0.938); // NEVER TOUCH THIS LINE
   // Draw the player, set the player's spawn position and scale (3 to adapt the player's size)
   player = this.physics.add.sprite(470, 380, "player").setScale(3);
   // fix the player's hitbox cuz it's too big with the collision
-  player.body.setSize(player.width - 5, player.height - 40, false).setOffset(0, 10);
+  player.body
+    .setSize(player.width - 5, player.height - 40, false)
+    .setOffset(0, 10);
 
   // Call the function to create the player animations for each direction
   createPlayerAnimation("down", this);
@@ -538,13 +540,14 @@ this.add.image(1140, 740, "map").setScale(0.938); // NEVER TOUCH THIS LINE
   createPlayerAnimation("left", this);
   createPlayerAnimation("right", this);
   // Set the collision for the player and the red blocks (temporary red, will be invisible later)
-  setCollision.forEach((coords) => { // going through the set of collision coordinates
-    const [x, y] = coords.split(",").map(Number); 
+  setCollision.forEach((coords) => {
+    // going through the set of collision coordinates
+    const [x, y] = coords.split(",").map(Number);
     let redBlock = this.add
       .rectangle(x, y, 48, 48, 0xff0000)
       .setOrigin(21, 9.8)
       .setScale(1);
-    
+
     this.physics.add.existing(redBlock);
     redBlock.body.immovable = true;
     this.physics.add.collider(player, redBlock); // set the collision between the player and walls
