@@ -1,172 +1,121 @@
-// 1. (DOM) Get the canvas element from the HTML file
-const gameCanvas = document.getElementById("gameCanvas");
-// 2. (Canvas) Get the 2D context from the canvas element
-const ctx = gameCanvas.getContext("2d");
+// Constants
+const GAME_WIDTH = 1024;
+const GAME_HEIGHT = 600;
+const PLAYER_SPEED = 160;
+const FRAMERATE = 9;
 
-// 3. (Canvas) Set the canvas width and height
-gameCanvas.width = 1024;
-gameCanvas.height = 574;
-
-// 12. Create a 2D array to store the map collisions slice by 90 (number of tiles in a row)
-mapCollisions = [];
-for (let i = 0; i < collisions.length; i += 90) {
-  mapCollisions.push(collisions.slice(i, 90 + i));
-}
-console.log(mapCollisions);
-
-/* 4. (Canvas) Set the background color and draw the canvas
-ctx.fillStyle = "white";
-ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-*/
-
-// 5. (Canvas) Set the map image through html
-const map = new Image();
-map.src = "./assets/map.png";
-// 6. (Canvas) Set the player image through html
-const player = new Image();
-player.src = "./assets/player_walk_down.png";
-
-// 9. (Canvas) Create a class to handle the movement of the map/player images
-class visual {
-  constructor({ position, image }) {
-    this.position = position;
-    this.image = image;
-  }
-  move() {
-    // draw the map without scaling factor for performance purposes
-    ctx.drawImage(this.image, this.position.x, this.position.y);
-  }
-}
-const mapBackground = new visual({
-  position: {
-    x: -1100,
-    y: -550,
+// Phaser 3 : Configuration the game performance settings
+const config = {
+  type: Phaser.AUTO,
+  width: GAME_WIDTH,
+  height: GAME_HEIGHT,
+  physics: {
+    default: "arcade",
+    arcade: {
+      gravity: { y: 0 },
+    },
   },
-  image: map,
-});
-
-// 10. (Canvas) Create an object to store the keys pressed
-const keys = {
-  ArrowUp: {
-    pressed: false,
+  render: {
+    pixelArt: true,
+    contextAttributes: {
+      // tried to handle chrome's performance issues
+      willReadFrequently: true,
+    },
   },
-  ArrowDown: {
-    pressed: false,
-  },
-  ArrowLeft: {
-    pressed: false,
-  },
-  ArrowRight: {
-    pressed: false,
+  scene: {
+    preload: preload,
+    create: create,
+    update: update,
+    createPlayerAnimation: createPlayerAnimation,
   },
 };
-// 7. (Canvas) Draw the map image and the player image on the canvas
-// 12-08-2024 : had to use promises to load the images before drawing them on the canvas otherwise the player image was not being drawn
-// Each promise will resolve when the image is loaded successfully
-const mapPromise = new Promise((resolve, reject) => {
-  map.onload = () => {
-    resolve();
-  };
-  map.onerror = reject;
-});
-// Each promise will resolve when the image is loaded successfully
-const playerPromise = new Promise((resolve, reject) => {
-  player.onload = () => {
-    console.log("player.png loaded successfully");
-    resolve();
-  };
-  player.onerror = reject;
-});
 
-function play() {
-  window.requestAnimationFrame(play);
-  // Promise.all() will resolve when all promises are resolved
-  Promise.all([mapPromise, playerPromise])
-    .then(() => {
-      // draw the map and scale it up
-      mapBackground.move();
-      // draw the player, crop the sprite and scale it up
-      ctx.drawImage(
-        player,
-        0,
-        0,
-        player.width / 4,
-        player.height,
-        // corodinates to draw the player
-        455,
-        350,
-        player.width * 0.75, // triple the width
-        player.height * 3 // triple the height
-      );
-    })
-    .catch(() => {
-      console.error("one of the images failed to load");
-    });
-  if (keys.ArrowUp.pressed && lastKeyPressed === "ArrowUp") {
-    mapBackground.position.y += 3;
-  } else if (keys.ArrowDown.pressed && lastKeyPressed === "ArrowDown") {
-    mapBackground.position.y -= 3;
-  } else if (keys.ArrowLeft.pressed && lastKeyPressed === "ArrowLeft") {
-    mapBackground.position.x += 3;
-  } else if (keys.ArrowRight.pressed && lastKeyPressed === "ArrowRight") {
-    mapBackground.position.x -= 3;
+// Create the game instance and initialize player and cursors variables
+const game = new Phaser.Game(config);
+let player;
+let cursors;
+let wasd;
+
+function preload() {
+  // Load the map and all the player assets
+  this.load.image("map", "assets/map.png");
+  this.load.spritesheet("player", "assets/player.png", {
+    frameWidth: 32,
+    frameHeight: 48,
+  });
+  this.load.spritesheet("player_down", "assets/player_walk_down.png", {
+    frameWidth: 30,
+    frameHeight: 30,
+  });
+  this.load.spritesheet("player_up", "assets/player_walk_up.png", {
+    frameWidth: 30,
+    frameHeight: 29,
+  });
+  this.load.spritesheet("player_left", "assets/player_walk_left.png", {
+    frameWidth: 30,
+    frameHeight: 30,
+  });
+  this.load.spritesheet("player_right", "assets/player_walk_right.png", {
+    frameWidth: 30,
+    frameHeight: 30,
+  });
+}
+
+function create() {
+  // Draw the map, set the dimensions and scale (0.9 to fit the screen)
+  this.add.image(1120, 740, "map").setScale(0.9);
+  // Draw the player, set the player's spawn position and scale (3 to adapt the player's size)
+  player = this.physics.add.sprite(470, 380, "player").setScale(3);
+
+  // Call the function to create the player animations for each direction
+  createPlayerAnimation("down", this);
+  createPlayerAnimation("up", this);
+  createPlayerAnimation("left", this);
+  createPlayerAnimation("right", this);
+
+  // Set the variables to handle the keyboard inputs (arrow keys and WASD keys)
+  cursors = this.input.keyboard.createCursorKeys();
+  wasd = this.input.keyboard.addKeys({
+    up: Phaser.Input.Keyboard.KeyCodes.W,
+    down: Phaser.Input.Keyboard.KeyCodes.S,
+    left: Phaser.Input.Keyboard.KeyCodes.A,
+    right: Phaser.Input.Keyboard.KeyCodes.D,
+  });
+
+  // Set the camera to follow the player and set the limits
+  this.cameras.main.startFollow(player);
+  this.cameras.main.setBounds(-800, -800, 5000, 3500);
+}
+
+// Create the player animations for each direction
+function createPlayerAnimation(direction, scene) {
+  scene.anims.create({
+    key: direction,
+    frames: scene.anims.generateFrameNumbers(`player_${direction}`, {
+      start: 0,
+      end: 3,
+    }),
+    frameRate: FRAMERATE,
+    repeat: -1,
+  });
+}
+
+// Update the player's movement based on the keyboard inputs
+function update() {
+  player.setVelocity(0);
+  if (cursors.left.isDown || wasd.left.isDown) {
+    player.setVelocityX(-PLAYER_SPEED);
+    player.anims.play("left", true);
+  } else if (cursors.right.isDown || wasd.right.isDown) {
+    player.setVelocityX(PLAYER_SPEED);
+    player.anims.play("right", true);
+  } else if (cursors.up.isDown || wasd.up.isDown) {
+    player.setVelocityY(-PLAYER_SPEED);
+    player.anims.play("up", true);
+  } else if (cursors.down.isDown || wasd.down.isDown) {
+    player.setVelocityY(PLAYER_SPEED);
+    player.anims.play("down", true);
+  } else {
+    player.anims.stop();
   }
 }
-play();
-
-let lastKeyPressed = "";
-// 8. (Canvas) Move the player image on the canvas
-window.addEventListener("keydown", (event) => {
-  switch (event.key) {
-    case "ArrowUp":
-      // if i press the up arrow key, the key object will be updated
-      keys.ArrowUp.pressed = true;
-      lastKeyPressed = "ArrowUp";
-      break;
-    case "ArrowDown":
-      keys.ArrowDown.pressed = true;
-      lastKeyPressed = "ArrowDown";
-      break;
-    case "ArrowLeft":
-      keys.ArrowLeft.pressed = true;
-      lastKeyPressed = "ArrowLeft";
-      break;
-    case "ArrowRight":
-      keys.ArrowRight.pressed = true;
-      lastKeyPressed = "ArrowRight";
-      break;
-    default:
-      break;
-  }
-  // check the keys object if they are being updated
-  console.log(keys);
-});
-// 11. (Canvas) Set the keyup event listener to stop the player image from moving when the key is released
-window.addEventListener("keyup", (event) => {
-  switch (event.key) {
-    case "ArrowUp":
-      // if i press the up arrow key, the key object will be updated
-      keys.ArrowUp.pressed = false;
-      break;
-    case "ArrowDown":
-      keys.ArrowDown.pressed = false;
-      break;
-    case "ArrowLeft":
-      keys.ArrowLeft.pressed = false;
-      break;
-    case "ArrowRight":
-      keys.ArrowRight.pressed = false;
-      break;
-    default:
-      break;
-  }
-  // check the keys object if they are being updated
-  console.log(keys);
-});
-
-// testing the canvas and the images
-console.log(ctx);
-console.log(player);
-console.log(gameCanvas);
-console.log(keys);
-console.log(collisions);
