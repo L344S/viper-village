@@ -3,3 +3,4 @@ package.json
 package-lock.json
 node_modules
 viper-village-collision.json
+.DS_Store
