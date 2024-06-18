@@ -498,11 +498,13 @@ const game = new Phaser.Game(config);
 let player;
 let cursors;
 let wasd;
+let objects; // NEW TESTTTTTTT
 // let graphics; testing temporary hitbox
 
 function preload() {
   // Load the map and all the player assets
   this.load.image("map", "../assets/map.png");
+  this.load.image("object", "../assets/layer_objects.png"); // NEW TESTTTTTTT
   this.load.spritesheet("player", "../assets/player.png", {
     frameWidth: 32,
     frameHeight: 48,
@@ -530,6 +532,8 @@ function create() {
   this.add.image(1140, 740, "map").setScale(0.938); // NEVER TOUCH THIS LINE
   // Draw the player, set the player's spawn position and scale (3 to adapt the player's size)
   player = this.physics.add.sprite(470, 380, "player").setScale(3);
+  player.depth = player.y; // NEW TESTTTTTTT
+
   // fix the player's hitbox cuz it's too big with the collision
   player.body
     .setSize(player.width - 10, player.height - 40, false)
@@ -555,6 +559,12 @@ function create() {
     colBlock.body.immovable = true;
     this.physics.add.collider(player, colBlock); // set the collision between the player and walls
   });
+  // NEW TESTTTTTTT
+  objects = this.add.group();
+  const object = this.add.image(1141.5, 742, "object").setScale(4.05); // NEVER TOUCH THIS LINE
+  object.depth = 1000; // Fix depth of objects to a high value
+  objects.add(object);
+
   // Set the variables to handle the keyboard inputs (arrow keys and WASD keys)
   cursors = this.input.keyboard.createCursorKeys();
   wasd = this.input.keyboard.addKeys({
@@ -616,4 +626,6 @@ function update() {
     player.anims.stop();
   }
   //console.log(`Position du joueur - x: ${player.x}, y: ${player.y}`);
+  // NEW TESTTTTTTT
+  player.depth = player.y + player.height;
 }
