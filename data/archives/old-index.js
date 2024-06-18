@@ -1,5 +1,5 @@
 // 1. (DOM) Get the canvas element from the HTML file
-const gameCanvas = document.querySelector('canvas');
+const gameCanvas = document.querySelector("canvas");
 // 2. (Canvas) Get the 2D context from the canvas element
 const ctx = gameCanvas.getContext("2d");
 
