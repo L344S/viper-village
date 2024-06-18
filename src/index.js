@@ -1,6 +1,6 @@
 // import nessessary collision coordinates data
 // i'm was lazy but i finally did it
-import { setCollision } from '../data/collisions.js';
+import { setCollision } from "../data/collisions.js";
 // Constants
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 600;
