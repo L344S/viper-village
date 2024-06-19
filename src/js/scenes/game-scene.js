@@ -76,6 +76,8 @@ export default class GameScene extends Phaser.Scene {
       // Draw the map, set the dimensions and scale (0.9 to fit properly)
       const map = this.add.image(1140, 740, "map").setScale(0.938);
       if (!map) throw new Error("Failed to load map");
+      // Transition effect to fade between scenes
+      this.cameras.main.fadeIn(1000, 0, 0, 0);
 
       // Draw the player sprite and set its scale
       this.player = this.physics.add.sprite(470, 380, "player").setScale(3);
