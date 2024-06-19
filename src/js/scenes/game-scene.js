@@ -24,6 +24,7 @@ export default class GameScene extends Phaser.Scene {
   preload() {
     try {
       // Load all assets
+      // Game scene assets
       this.load.image("map", "../../assets/map.png");
       this.load.image("objectLayer", "../../assets/layer_objects.png");
       this.load.spritesheet("player", "../../assets/player.png", {
@@ -58,6 +59,10 @@ export default class GameScene extends Phaser.Scene {
           frameHeight: 30,
         }
       );
+      /* Assets for pause menu (decided to use ESC finaly)
+      this.load.image("resumeButton", "../../assets/play-button.png");
+      this.load.image("quitButton", "../../assets/exit-button.png");
+      */
     } catch (error) {
       // If an asset fails to load, throw an error
       console.error("Error during game preload phase:", error);
@@ -135,6 +140,12 @@ export default class GameScene extends Phaser.Scene {
       // Set up camera to follow the player and set the bounds of the game world
       this.cameras.main.startFollow(this.player);
       this.cameras.main.setBounds(-800, -800, 5000, 3500);
+
+      // Add an event listener for the Esc key to lauch the pause menu
+      this.input.keyboard.on("keydown-ESC", () => {
+        this.scene.pause();
+        this.scene.launch("MenuScene");
+      });
     } catch (error) {
       console.error("Error during game creation phase:", error);
     }
