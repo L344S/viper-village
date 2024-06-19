@@ -7,12 +7,14 @@
  *
  * Changelog:
  * - Divide the game into multiple scenes for better organization and maintainability.
- * - Implement a menu scene to handle game start and the exit later.
+ * - Implement a intro scene to handle game start and the exit later.
+ * - Implement a pause menu scene to handle game pausing and resuming.
  */
 
 // Imports
-import MenuScene from "./scenes/menu-scene.js";
+import IntroScene from "./scenes/intro-scene.js";
 import GameScene from "./scenes/game-scene.js";
+import MenuScene from "./scenes/menu-scene.js";
 
 // Game configuration object (Phaser 3)
 const config = {
@@ -31,7 +33,7 @@ const config = {
       willReadFrequently: true,
     },
   },
-  scene: [MenuScene, GameScene],
+  scene: [IntroScene, GameScene, MenuScene],
 };
 
 // Game object initialization
