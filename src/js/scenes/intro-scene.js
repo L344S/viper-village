@@ -17,7 +17,7 @@ export default class IntroScene extends Phaser.Scene {
     // Load assets for the menu scene
     try {
       // Load all assets
-      this.load.image("background", "../../assets/logo.png");
+      this.load.image("background", "../../assets/background.png");
       this.load.image("startButton", "../../assets/button.png");
     } catch (error) {
       // If an asset fails to load, throw an error
@@ -35,23 +35,21 @@ export default class IntroScene extends Phaser.Scene {
   create() {
     try {
       // Draw the background image et set the origin to the center
-      const background = this.add
-        .image(
-          this.cameras.main.centerX,
-          this.cameras.main.centerY,
-          "background"
-        )
-        .setOrigin(0.5);
+      const background = this.add.image(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        "background"
+      );
       if (!background) throw new Error("Failed to load background image");
 
       // Draw the start button image and set the scale
       const startButton = this.add
         .image(
           this.cameras.main.centerX,
-          this.cameras.main.centerY + 205, // Adjusted position for better layout
+          this.cameras.main.centerY, // Adjusted position for better layout
           "startButton"
         )
-        .setScale(0.8);
+        .setScale(1);
       if (!startButton) throw new Error("Failed to load play button image");
 
       // Add event listener to the play button
