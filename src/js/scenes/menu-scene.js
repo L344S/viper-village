@@ -115,8 +115,11 @@ export default class MenuScene extends Phaser.Scene {
       if (!exitButton) throw new Error("Failed to load exit button image");
       // Add click event to the exit button (need the change that part when we have an exit scene)
       exitButton.on("pointerdown", () => {
-        this.scene.stop("GameScene");
-        this.scene.start("EndScene");
+        this.cameras.main.fadeOut(500, 0, 0, 0);
+        this.cameras.main.once("camerafadeoutcomplete", () => {
+          this.scene.stop("GameScene");
+          this.scene.start("EndScene");
+        });
       });
     } catch (error) {
       console.error("Error during menu creation phase:", error);
