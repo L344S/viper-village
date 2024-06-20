@@ -110,7 +110,7 @@ export default class MenuScene extends Phaser.Scene {
 
       // Add click event to the home button to return to the main menu with a fade effect
       homeButton.on("pointerdown", () => {
-        this.cameras.main.fadeOut(1000, 0, 0, 0);
+        this.cameras.main.fadeOut(500, 0, 0, 0);
         this.cameras.main.once("camerafadeoutcomplete", () => {
           this.scene.stop("GameScene");
           this.scene.start("IntroScene");
