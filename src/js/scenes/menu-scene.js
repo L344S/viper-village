@@ -94,7 +94,7 @@ export default class MenuScene extends Phaser.Scene {
       // Add click event to the exit button (need the change that part when we have an exit scene)
       exitButton.on("pointerdown", () => {
         this.scene.stop("GameScene");
-        this.scene.start("IntroScene");
+        this.scene.start("EndScene");
       });
 
       // Draw the home button image and set its dimensions
