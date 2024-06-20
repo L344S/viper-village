@@ -107,10 +107,14 @@ export default class MenuScene extends Phaser.Scene {
         .setScale(1)
         .setInteractive();
       if (!homeButton) throw new Error("Failed to load home button image");
-      // Add click event to the home button
+
+      // Add click event to the home button to return to the main menu with a fade effect
       homeButton.on("pointerdown", () => {
-        this.scene.stop("GameScene");
-        this.scene.start("IntroScene");
+        this.cameras.main.fadeOut(1000, 0, 0, 0);
+        this.cameras.main.once("camerafadeoutcomplete", () => {
+          this.scene.stop("GameScene");
+          this.scene.start("IntroScene");
+        });
       });
     } catch (error) {
       console.error("Error during menu creation phase:", error);
