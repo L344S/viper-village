@@ -15,6 +15,7 @@
 import IntroScene from "./scenes/intro-scene.js";
 import GameScene from "./scenes/game-scene.js";
 import MenuScene from "./scenes/menu-scene.js";
+import EndScene from "./scenes/end-scene.js";
 
 // Game configuration object (Phaser 3)
 const config = {
@@ -33,7 +34,7 @@ const config = {
       willReadFrequently: true,
     },
   },
-  scene: [IntroScene, GameScene, MenuScene],
+  scene: [IntroScene, GameScene, MenuScene, EndScene],
 };
 
 // Game object initialization
