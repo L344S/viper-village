@@ -81,21 +81,7 @@ export default class MenuScene extends Phaser.Scene {
         this.scene.stop();
       });
 
-      // Draw the exit button image and set its dimensions
-      const exitButton = this.add
-        .image(
-          this.cameras.main.centerX,
-          this.cameras.main.centerY + 155,
-          "exitButton"
-        )
-        .setScale(1)
-        .setInteractive();
-      if (!exitButton) throw new Error("Failed to load exit button image");
-      // Add click event to the exit button (need the change that part when we have an exit scene)
-      exitButton.on("pointerdown", () => {
-        this.scene.stop("GameScene");
-        this.scene.start("EndScene");
-      });
+      // NEED ONE MORE BUTTON FOR SETTINGS (MUSIC, SOUND, ETC.) LATER
 
       // Draw the home button image and set its dimensions
       const homeButton = this.add
@@ -115,6 +101,22 @@ export default class MenuScene extends Phaser.Scene {
           this.scene.stop("GameScene");
           this.scene.start("IntroScene");
         });
+      });
+
+      // Draw the exit button image and set its dimensions
+      const exitButton = this.add
+        .image(
+          this.cameras.main.centerX,
+          this.cameras.main.centerY + 155,
+          "exitButton"
+        )
+        .setScale(1)
+        .setInteractive();
+      if (!exitButton) throw new Error("Failed to load exit button image");
+      // Add click event to the exit button (need the change that part when we have an exit scene)
+      exitButton.on("pointerdown", () => {
+        this.scene.stop("GameScene");
+        this.scene.start("EndScene");
       });
     } catch (error) {
       console.error("Error during menu creation phase:", error);
