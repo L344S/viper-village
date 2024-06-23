@@ -127,6 +127,29 @@ export default class GameScene extends Phaser.Scene {
       // Set the depth of the object layer
       object.depth = 1000;
       this.objectLayer.add(object);
+      
+      // Add a detection pixel for the player to interact with the purple house scene
+      this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+      const purpleHouseDoor = this.add.rectangle(435, 1190, 44, 44, 0x000000, 0);
+      this.physics.add.existing(purpleHouseDoor);
+      purpleHouseDoor.body.immovable = true;
+      purpleHouseDoor.body.moves = false;
+      this.physics.add.overlap(
+        this.player,
+        purpleHouseDoor,
+        () => {
+          // Enter only if the player presses the E key
+          if (Phaser.Input.Keyboard.JustDown(this.keyE)) {
+            // add fade transition effect between scenes
+            this.cameras.main.fadeOut(800, 0, 0, 0);
+            this.time.delayedCall(800, () => {
+              this.scene.start("PurpleHouseRiddleScene"); 
+            });
+          }
+        },
+        null,
+        this
+      );
 
       // Listen for keyboard input and set up player movement controls (arrow keys and WASD)
       this.cursors = this.input.keyboard.createCursorKeys();
