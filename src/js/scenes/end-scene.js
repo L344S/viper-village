@@ -20,10 +20,22 @@ export default class EndScene extends Phaser.Scene {
 
   preload() {
     // Load all assets for the end scene
-    this.load.image("endBackground", "../../assets/end-background.jpg");
-    this.load.image("restartButton", "../../assets/restart-button.png");
-    this.load.image("webpageButton", "../../assets/webpage-button.png");
-    this.load.image("githubButton", "../../assets/github-button.png");
+    this.load.image(
+      "endBackground",
+      "../../assets/visual/scenes/end-background.jpg"
+    );
+    this.load.image(
+      "restartButton",
+      "../../assets/visual/buttons/restart-button.png"
+    );
+    this.load.image(
+      "webpageButton",
+      "../../assets/visual/buttons/webpage-button.png"
+    );
+    this.load.image(
+      "githubButton",
+      "../../assets/visual/buttons/github-button.png"
+    );
   }
 
   /**
