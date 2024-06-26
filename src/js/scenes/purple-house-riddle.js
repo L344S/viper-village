@@ -18,12 +18,27 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
 
   preload() {
     // Load all assets
-    this.load.image("PurpleHouseRiddlePng", "../../assets/visual/scenes/purple-house-background.png");
-    this.load.image("leaveHouseButton", "../../assets/visual/buttons/leave-button.png");
-    this.load.image("bubble", "../../assets/visual/dialogues/speech-bubble-cream.png");
-    this.load.image("textbox", "../../assets/visual/dialogues/black-text-box2.png");
+    this.load.image(
+      "PurpleHouseRiddlePng",
+      "../../assets/visual/scenes/purple-house-background.png"
+    );
+    this.load.image(
+      "leaveHouseButton",
+      "../../assets/visual/buttons/leave-button.png"
+    );
+    this.load.image(
+      "bubble",
+      "../../assets/visual/dialogues/speech-bubble-cream.png"
+    );
+    this.load.image(
+      "textbox",
+      "../../assets/visual/dialogues/black-text-box2.png"
+    );
     this.load.image("submit", "../../assets/visual/buttons/submit-button.png");
-    this.load.image("wrongAnswer", "../../assets/visual/windows/window-wronginput.png");
+    this.load.image(
+      "wrongAnswer",
+      "../../assets/visual/windows/window-wronginput.png"
+    );
   }
 
   create() {
