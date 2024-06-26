@@ -436,8 +436,8 @@ export default class GameScene extends Phaser.Scene {
   update() {
     // Stop the player movement and animation if no keys are pressed
     this.player.setVelocity(0);
-    // Check for keyboard input, move and play the corresponding animation
-    if (this.cursors.left.isDown || this.wasd.left.isDown) {
+    // Check for player movement input and play the corresponding animation
+    if (this.cursors.left.isDown) {
       this.player.setVelocityX(-PLAYER_SPEED);
       this.player.anims.play("left", true);
     } else if (this.cursors.right.isDown) {
