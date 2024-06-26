@@ -19,10 +19,22 @@ export default class MenuScene extends Phaser.Scene {
   preload() {
     try {
       // Load all assets for the pause menu
-      this.load.image("menuBoard", "../../assets/visual/scenes/menu-board-background.png");
-      this.load.image("playButton", "../../assets/visual/buttons/play-button.png");
-      this.load.image("homeButton", "../../assets/visual/buttons/home-button.png");
-      this.load.image("exitButton", "../../assets/visual/buttons/exit-button.png");
+      this.load.image(
+        "menuBoard",
+        "../../assets/visual/scenes/menu-board-background.png"
+      );
+      this.load.image(
+        "playButton",
+        "../../assets/visual/buttons/play-button.png"
+      );
+      this.load.image(
+        "homeButton",
+        "../../assets/visual/buttons/home-button.png"
+      );
+      this.load.image(
+        "exitButton",
+        "../../assets/visual/buttons/exit-button.png"
+      );
     } catch (error) {
       // If an asset fails to load, throw an error
       console.error("Error loading menu assets:", error);
