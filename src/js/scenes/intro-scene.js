@@ -17,8 +17,8 @@ export default class IntroScene extends Phaser.Scene {
     // Load assets for the menu scene
     try {
       // Load all assets
-      this.load.image("background", "../../assets/intro-background.png");
-      this.load.image("startButton", "../../assets/start-button.png");
+      this.load.image("background", "../../assets/visual/scenes/intro-background.png");
+      this.load.image("startButton", "../../assets/visual/buttons/start-button.png");
     } catch (error) {
       // If an asset fails to load, throw an error
       console.error("Error during menu preload phase:", error);
