@@ -1,3 +1,7 @@
+@font-face {
+  font-family: "pixel times";
+  src: url("../js/helpers/Pixel Times.ttf");
+}
 body {
   background-color: #000000;
 }
@@ -10,9 +14,23 @@ canvas {
   left: 0;
   right: 0;
 }
+.classeInput {
+  font-family: "Pixel Times";
+  color: #fff;
+  background-color: black;
+  font-size: 13px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 645px;
+  left: 610px;
+  width: 195px;
+  height: 29px;
+}
 
 /* Don't need the code below anymore cause we are using png images... */
-
 /*.container {
   margin: 50px;
   display: block;
