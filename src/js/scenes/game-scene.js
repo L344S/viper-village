@@ -278,8 +278,8 @@ export default class GameScene extends Phaser.Scene {
     riddleSolvedMessage.setDepth(10000);
     const closeButton = this.add
       .image(
-        this.cameras.main.centerX + 158, // Adjust position as needed
-        this.cameras.main.centerY - 145, // Adjust position as needed
+        this.cameras.main.centerX + 158, // might need to adjust position with responsiveness
+        this.cameras.main.centerY - 145, // might need to adjust position with responsiveness
         "closeButton"
       )
       .setScale(0.5)
@@ -309,8 +309,8 @@ export default class GameScene extends Phaser.Scene {
     alreadySolvedMessage.setDepth(10000);
     const closeButton = this.add
       .image(
-        this.cameras.main.centerX + 158, // Adjust position as needed
-        this.cameras.main.centerY - 145, // Adjust position as needed
+        this.cameras.main.centerX + 158, // might need to adjust position with responsiveness
+        this.cameras.main.centerY - 145, // might need to adjust position with responsiveness
         "closeButton"
       )
       .setScale(0.5)
