@@ -19,10 +19,10 @@ export default class MenuScene extends Phaser.Scene {
   preload() {
     try {
       // Load all assets for the pause menu
-      this.load.image("menuBoard", "../../assets/menu-board.png");
-      this.load.image("playButton", "../../assets/play-button.png");
-      this.load.image("homeButton", "../../assets/home-button.png");
-      this.load.image("exitButton", "../../assets/exit-button.png");
+      this.load.image("menuBoard", "../../assets/visual/scenes/menu-board-background.png");
+      this.load.image("playButton", "../../assets/visual/buttons/play-button.png");
+      this.load.image("homeButton", "../../assets/visual/buttons/home-button.png");
+      this.load.image("exitButton", "../../assets/visual/buttons/exit-button.png");
     } catch (error) {
       // If an asset fails to load, throw an error
       console.error("Error loading menu assets:", error);
@@ -117,6 +117,7 @@ export default class MenuScene extends Phaser.Scene {
       exitButton.on("pointerdown", () => {
         this.cameras.main.fadeOut(500, 0, 0, 0);
         this.cameras.main.once("camerafadeoutcomplete", () => {
+          this.scene.get("GameScene").resetGame();
           this.scene.stop("GameScene");
           this.scene.start("EndScene");
         });
