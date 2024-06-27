@@ -15,6 +15,7 @@
 import IntroScene from "./scenes/intro-scene.js";
 import GameScene from "./scenes/game-scene.js";
 import PurpleHouseRiddleScene from "./scenes/purple-house-riddle.js";
+import GreenHouseRiddleScene from "./scenes/green-house-riddle.js";
 import MenuScene from "./scenes/menu-scene.js";
 import EndScene from "./scenes/end-scene.js";
 
@@ -35,7 +36,14 @@ const config = {
       willReadFrequently: true,
     },
   },
-  scene: [IntroScene, GameScene, PurpleHouseRiddleScene, MenuScene, EndScene],
+  scene: [
+    IntroScene,
+    GameScene,
+    PurpleHouseRiddleScene,
+    GreenHouseRiddleScene,
+    MenuScene,
+    EndScene,
+  ],
 };
 
 // Game object initialization
