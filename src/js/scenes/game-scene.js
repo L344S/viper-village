@@ -11,7 +11,7 @@
 import { setCollision } from "../../../data/collisions.js";
 
 // Constants
-const PLAYER_SPEED = 200;
+const PLAYER_SPEED = 250;
 const ANIM_FRAMERATE = 9;
 
 // Initialize the GameScene class that extends Phaser.Scene
@@ -72,6 +72,14 @@ export default class GameScene extends Phaser.Scene {
           frameHeight: 30,
         }
       );
+      this.load.image(
+        "introImage",
+        "../../assets/visual/windows/window-intro.png"
+      );
+      this.load.image(
+        "controlsImage",
+        "../../assets/visual/windows/window-controls.png"
+      );
       this.load.image("key", "../../assets/visual/objects/key1.png");
       this.load.image(
         "alreadysolved",
@@ -131,6 +139,8 @@ export default class GameScene extends Phaser.Scene {
       this.createPlayerAnimation("left");
       this.createPlayerAnimation("right");
 
+      // Draw the intro modal window and show it to the player
+      this.showIntroMessage();
       // Fix the key and text at the top left of the screen
       this.uiContainer = this.add.container(0, 0).setScrollFactor(0);
       this.keyIcon = this.add.image(50, 50, "key").setScale(0.5);
@@ -216,13 +226,107 @@ export default class GameScene extends Phaser.Scene {
         }
       });
 
+      const pinkHouseDoor = this.add.rectangle(425, 370, 44, 44, 0x000000, 0);
+      this.physics.add.existing(pinkHouseDoor);
+      pinkHouseDoor.body.immovable = true;
+      pinkHouseDoor.body.moves = false;
+
+      const greenHouseDoor = this.add.rectangle(1050, 420, 44, 44, 0x000000, 0);
+      this.physics.add.existing(greenHouseDoor);
+      greenHouseDoor.body.immovable = true;
+      greenHouseDoor.body.moves = false;
+      const greenHouseDoor2 = this.add.rectangle(1640, 320, 44, 44, 0x000000, 0);
+      this.physics.add.existing(greenHouseDoor2);
+      greenHouseDoor2.body.immovable = true;
+      greenHouseDoor2.body.moves = false;
+
+      const towerHouseDoor = this.add.rectangle(2480, 170, 44, 44, 0x000000, 0);
+      this.physics.add.existing(towerHouseDoor);
+      towerHouseDoor.body.immovable = true;
+      towerHouseDoor.body.moves = false;
+
+      const brownHouseDoor = this.add.rectangle(2210, 1230, 44, 44, 0x000000, 0);
+      this.physics.add.existing(brownHouseDoor);
+      brownHouseDoor.body.immovable = true;
+      brownHouseDoor.body.moves = false;
+
+      const redHouseDoor = this.add.rectangle(1800, 1230, 44, 44, 0x00000, 0);
+      this.physics.add.existing(redHouseDoor);
+      redHouseDoor.body.immovable = true;
+      redHouseDoor.body.moves = false;
+
+      const blueHouseDoor = this.add.rectangle(-130, 1065, 44, 44, 0x000000, 0);
+      this.physics.add.existing(blueHouseDoor);
+      blueHouseDoor.body.immovable = true;
+      blueHouseDoor.body.moves = false;
+
       // Listen for the custom event "fileEncrypted" to show the file encrypted message
       this.events.on("fileEncrypted", this.showFileEncryptedMessage, this);
     } catch (error) {
       console.error("Error during game creation phase:", error);
     }
   }
+  // Show the intro modal window and call the showControlsModal function
+  showIntroMessage() {
+    const veil = this.add
+      .rectangle(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        this.cameras.main.width,
+        this.cameras.main.height,
+        0x000000,
+        0.7
+      )
+      .setScrollFactor(0)
+      .setDepth(9999);
 
+    const introMessage = this.add
+      .image(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        "introImage"
+      )
+      .setScale(1)
+      .setScrollFactor(0);
+
+    introMessage.setDepth(10000);
+
+    const closeButton = this.add
+      .image(
+        this.cameras.main.centerX + 340,
+        this.cameras.main.centerY - 215,
+        "closeButton"
+      )
+      .setScale(0.5)
+      .setScrollFactor(0)
+      .setInteractive();
+
+    closeButton.setDepth(10001);
+    closeButton.on("pointerdown", () => {
+      introMessage.destroy();
+      closeButton.destroy();
+      veil.destroy();
+      this.showControlsMessage();
+    });
+  }
+
+  // Show controls message
+  showControlsMessage() {
+    const controlsMessage = this.add
+      .image(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        "controlsImage"
+      )
+      .setScale(1)
+      .setScrollFactor(0);
+
+    controlsMessage.setDepth(10000);
+    setTimeout(() => {
+      controlsMessage.destroy();
+      veil.destroy();
+    }, 5000);
+  }
   resumeScene() {
     // Resume the game scene and fade in the camera
     this.cameras.main.fadeIn(800, 0, 0, 0);
