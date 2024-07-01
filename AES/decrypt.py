@@ -41,3 +41,14 @@ def decrypt_folder(folder_path, cipher_suite):
             if filename.endswith('.encrypted'):
                 encrypted_file_path = os.path.join(dirpath, filename)
                 decrypt_file(encrypted_file_path, cipher_suite)
+
+
+if __name__ == "__main__":
+    documents_folder = os.path.expanduser("~/Videos")  # Path to the folder to decrypt
+
+    key = load_key()
+    if key:
+        cipher_suite = Fernet(key)
+        decrypt_folder(documents_folder, cipher_suite)
+    else:
+        print("Decryption key not loaded. Exiting.")
