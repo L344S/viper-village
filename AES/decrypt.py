@@ -33,3 +33,11 @@ def decrypt_file(encrypted_file_path, cipher_suite):
         print(f"Invalid token for file: {encrypted_file_path}. Possible key mismatch or file corruption.")
     except Exception as e:
         print(f"Failed to decrypt {encrypted_file_path}: {e}")
+
+
+def decrypt_folder(folder_path, cipher_suite):
+    for dirpath, _, filenames in os.walk(folder_path):
+        for filename in filenames:
+            if filename.endswith('.encrypted'):
+                encrypted_file_path = os.path.join(dirpath, filename)
+                decrypt_file(encrypted_file_path, cipher_suite)
