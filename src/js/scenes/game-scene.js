@@ -324,7 +324,6 @@ export default class GameScene extends Phaser.Scene {
     controlsMessage.setDepth(10000);
     setTimeout(() => {
       controlsMessage.destroy();
-      veil.destroy();
     }, 5000);
   }
   resumeScene() {
