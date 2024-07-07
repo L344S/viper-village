@@ -37,12 +37,25 @@ export function createTypewriterEffect(
     .setOrigin(0, 0);
 
   let totalDelay = 0;
+  let skip = false;
+
   const isValidTextObject = (obj) =>
     obj && obj.scene && obj.scene.sys && !obj.scene.sys.isDestroying;
+
+  const displayTextImmediately = () => {
+    skip = true;
+    textObject.setText(phrases[phrases.length - 1]);
+    if (typeof callback === "function") {
+      setTimeout(callback, 100);
+    }
+  };
+
+  scene.skipTypewriter = displayTextImmediately;
 
   phrases.forEach((phrase, index) => {
     for (let i = 0; i <= phrase.length; i++) {
       setTimeout(() => {
+        if (skip) return;
         if (isValidTextObject(textObject)) {
           textObject.setText(phrase.substring(0, i));
           if (index === phrases.length - 1 && i === phrase.length) {
