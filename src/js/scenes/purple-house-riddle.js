@@ -39,6 +39,10 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
       "wrongAnswer",
       "../../assets/visual/windows/window-wronginput.png"
     );
+    this.load.image(
+      "skipButton",
+      "../../assets/visual/buttons/skip-button.png"
+    );
   }
 
   create() {
@@ -48,6 +52,15 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
     this.add.image(0, 0, "PurpleHouseRiddlePng").setOrigin(0).setScale(1);
     this.add.image(650, 250, "bubble").setScale(1.07);
 
+    const skipButton = this.add
+      .image(915, 555, "skipButton")
+      .setInteractive()
+      .setScale(0.9)
+      .on("pointerdown", () => {
+        if (this.skipTypewriter) {
+          this.skipTypewriter();
+        }
+      });
     // Create the typewriter effect for the introductory dialogue
     createTypewriterEffect(
       this,
@@ -62,7 +75,10 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
       1000,
       "#000000",
       177,
-      () => this.createRiddle()
+      () => {
+        this.createRiddle();
+        skipButton.destroy();
+      }
     );
 
     // Create the leave house button
@@ -96,6 +112,15 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
 
     // Set up the textbox and typewriter effect for the riddle
     this.add.image(512, 520, "textbox").setScale(1);
+    const skipButton = this.add
+      .image(915, 555, "skipButton")
+      .setInteractive()
+      .setScale(0.9)
+      .on("pointerdown", () => {
+        if (this.skipTypewriter) {
+          this.skipTypewriter();
+        }
+      });
     createTypewriterEffect(
       this,
       [
@@ -107,11 +132,15 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
       1000,
       TEXT_COLOR,
       330,
-      () => this.createInput()
+      () => {
+        skipButton.destroy();
+        this.createInput();
+      }
     );
   }
 
   // THIS PART NEEDS TO BE CORRECTED BUT IM LAZY
+  // 9-07-2024 : still lazy
   createInput() {
     // Create the input element
     const inputElement = document.createElement("input");
@@ -130,7 +159,6 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
     });
 
     document.body.appendChild(inputElement);
-
     // Create the submit button and add its functionality
     const submitButton = this.add
       .image(625, 550, "submit")
