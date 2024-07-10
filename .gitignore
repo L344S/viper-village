@@ -4,3 +4,5 @@ package-lock.json
 node_modules
 viper-village-collision.json
 .DS_Store
+logs/
+encryption_key.key
