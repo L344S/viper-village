@@ -14,10 +14,10 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
   constructor() {
     super({ key: "PurpleHouseRiddleScene" });
     this.attempts = 3;
+    this.isCriticalOperation = false; // Indicateur pour les opérations critiques
   }
 
   preload() {
-    // Load all assets
     this.load.image(
       "PurpleHouseRiddlePng",
       "../../assets/visual/scenes/purple-house-background.png"
@@ -68,7 +68,7 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
         "Welcome, seeker of truth. I am Arion, the Sage of Wisdom.",
         "To prove that you are worthy of lifting the curse and continuing your journey,",
         "you must solve the riddle I will pose to you. Think carefully, for every detail counts.",
-        "Here is your first trial:",
+        "Here is your trial:",
       ],
       568,
       210,
@@ -103,6 +103,8 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
       this.scene.resume("GameScene");
       this.scene.get("GameScene").resumeScene();
     });
+
+    this.setupNavigationPrevention(); // NOT 100% WORKING BUT DIDN'T FIND A BETTER WAY TO DO IT
   }
 
   createRiddle() {
@@ -141,6 +143,7 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
 
   // THIS PART NEEDS TO BE CORRECTED BUT IM LAZY
   // 9-07-2024 : still lazy
+  // 11-07-2024 : still lazy
   createInput() {
     // Create the input element
     const inputElement = document.createElement("input");
@@ -160,6 +163,13 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
 
     document.body.appendChild(inputElement);
     // Create the submit button and add its functionality
+    inputElement.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        console.log("Enter key pressed");
+        this.checkAnswer(inputElement.value);
+      }
+    });
+
     const submitButton = this.add
       .image(625, 550, "submit")
       .setScale(0.5)
@@ -169,7 +179,7 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
       });
   }
 
-  checkAnswer(answer) {
+  async checkAnswer(answer) {
     const correctAnswer = "echo";
     const gameScene = this.scene.get("GameScene");
     // Check if the answer is correct
@@ -181,7 +191,11 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
         this.scene.resume("GameScene");
         gameScene.addKey();
         gameScene.resumeScene();
-        document.getElementById("riddleInput").remove();
+        const riddleInput = document.getElementById("riddleInput");
+        if (riddleInput) {
+          riddleInput.remove();
+        }
+        this.isCriticalOperation = false;
       });
     } else {
       // Encrypted file when the player fails to solve the riddle 3 times
@@ -189,14 +203,29 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
       if (this.attempts > 0) {
         this.showWrongAnswerMessage();
       } else {
-        this.encryptFile();
+        if (!gameScene.areFilesEncrypted()) {
+          try {
+            this.isCriticalOperation = true;
+            await this.encryptFiles();
+            gameScene.setFilesEncrypted(true);
+            gameScene.setHouseEncrypted("purpleHouse");
+            console.log("Encryption completed");
+          } catch (error) {
+            console.error("Failed to encrypt files:", error);
+            this.isCriticalOperation = false;
+          }
+        }
         this.time.delayedCall(1000, () => {
           this.scene.stop("PurpleHouseRiddleScene");
           gameScene.failHouse("purpleHouse");
           gameScene.events.emit("fileEncrypted");
           this.scene.resume("GameScene");
           gameScene.resumeScene();
-          document.getElementById("riddleInput").remove();
+          const riddleInput = document.getElementById("riddleInput");
+          if (riddleInput) {
+            riddleInput.remove();
+          }
+          this.isCriticalOperation = false;
         });
       }
     }
@@ -221,8 +250,49 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
     });
   }
 
-  encryptFile() {
-    // waiting for the encryption logic to be implemented
-    console.log("A file has been encrypted!");
+  // Encrypt the files using the encryption python script on local machine
+  async encryptFiles() {
+    console.log("Encrypting files...");
+    try {
+      const response = await axios.get("http://127.0.0.1:3000/encrypt");
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(`Error calling encryption API: ${error}`);
+      throw error;
+    }
+  }
+  // Prevent the page from reloading when the player tries to leave the page
+  setupNavigationPrevention() {
+    history.pushState(null, null, location.href);
+    window.addEventListener("popstate", this.handlePopState.bind(this));
+    window.addEventListener("beforeunload", this.handleBeforeUnload.bind(this));
+  }
+  handlePopState(event) {
+    if (this.isCriticalOperation) {
+      history.pushState(null, null, location.href);
+      console.log("Navigation prevented");
+    }
+  }
+
+  handleBeforeUnload(event) {
+    if (this.isCriticalOperation) {
+      event.preventDefault();
+      event.returnValue = "";
+    }
+  }
+
+  shutdown() {
+    // Remove the event listeners when the scene is stopped
+    window.removeEventListener("popstate", this.handlePopState.bind(this));
+    window.removeEventListener(
+      "beforeunload",
+      this.handleBeforeUnload.bind(this)
+    );
+  }
+
+  stop() {
+    super.stop();
+    this.shutdown();
   }
 }
