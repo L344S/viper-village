@@ -19,9 +19,11 @@ export default class GameScene extends Phaser.Scene {
   constructor() {
     // Set the unique key for the GameScene
     super({ key: "GameScene" });
-    this.keys = 0;
+    this.keys = 4; // INITIALY SET TO 0 BUT TO TEST THE TOWER SCENE, IT WAS CHANGED TO 4
     this.resolvedHouses = {};
     this.failedHouses = {};
+    this.encryptedHouses = {};
+    this.filesEncrypted = false;
   }
 
   preload() {
@@ -235,17 +237,79 @@ export default class GameScene extends Phaser.Scene {
       this.physics.add.existing(greenHouseDoor);
       greenHouseDoor.body.immovable = true;
       greenHouseDoor.body.moves = false;
-      const greenHouseDoor2 = this.add.rectangle(1640, 320, 44, 44, 0x000000, 0);
+
+      // Make sure the player can enter the green house from both doors
+      const greenHouseDoor2 = this.add.rectangle(
+        1640,
+        320,
+        44,
+        44,
+        0x000000,
+        0
+      );
       this.physics.add.existing(greenHouseDoor2);
       greenHouseDoor2.body.immovable = true;
       greenHouseDoor2.body.moves = false;
 
+      const handleGreenHouseOverlap = () => {
+        if (Phaser.Input.Keyboard.JustDown(this.keyE)) {
+          if (
+            !this.isHouseResolved("greenHouse") &&
+            !this.isHouseFailed("greenHouse")
+          ) {
+            this.cameras.main.fadeOut(800, 0, 0, 0);
+            this.time.delayedCall(800, () => {
+              this.scene.pause("GameScene");
+              this.scene.launch("GreenHouseRiddleScene");
+            });
+          } else if (this.isHouseFailed("greenHouse")) {
+            this.showTrialFailedMessage();
+          } else {
+            this.showAlreadySolvedMessage();
+          }
+        }
+      };
+      this.physics.add.overlap(
+        this.player,
+        greenHouseDoor,
+        handleGreenHouseOverlap
+      );
+      this.physics.add.overlap(
+        this.player,
+        greenHouseDoor2,
+        handleGreenHouseOverlap
+      );
+
+      // draw the pixel to detect the door of the tower
       const towerHouseDoor = this.add.rectangle(2480, 170, 44, 44, 0x000000, 0);
       this.physics.add.existing(towerHouseDoor);
       towerHouseDoor.body.immovable = true;
       towerHouseDoor.body.moves = false;
 
-      const brownHouseDoor = this.add.rectangle(2210, 1230, 44, 44, 0x000000, 0);
+      // enter the tower scene when the player interacts with the door
+      const handleTowerAccess = () => {
+        if (Phaser.Input.Keyboard.JustDown(this.keyE)) {
+          if (this.canAccessTower()) {
+            this.cameras.main.fadeOut(800, 0, 0, 0);
+            this.time.delayedCall(800, () => {
+              this.scene.pause("GameScene");
+              this.scene.launch("TowerScene");
+            });
+          } else {
+            this.showNeedsMoreKeysMessage();
+          }
+        }
+      };
+      this.physics.add.overlap(this.player, towerHouseDoor, handleTowerAccess);
+
+      const brownHouseDoor = this.add.rectangle(
+        2210,
+        1230,
+        44,
+        44,
+        0x000000,
+        0
+      );
       this.physics.add.existing(brownHouseDoor);
       brownHouseDoor.body.immovable = true;
       brownHouseDoor.body.moves = false;
@@ -281,11 +345,7 @@ export default class GameScene extends Phaser.Scene {
       .setDepth(9999);
 
     const introMessage = this.add
-      .image(
-        this.cameras.main.centerX,
-        this.cameras.main.centerY,
-        "introImage"
-      )
+      .image(this.cameras.main.centerX, this.cameras.main.centerY, "introImage")
       .setScale(1)
       .setScrollFactor(0);
 
@@ -337,7 +397,10 @@ export default class GameScene extends Phaser.Scene {
     this.keysText.setText("Keys: " + this.keys);
     this.showRiddleSolvedMessage();
   }
-
+  // Flag to check if the player has enough keys to access the tower
+  canAccessTower() {
+    return this.keys >= 4;
+  }
   resolveHouse(houseKey) {
     // Mark the house as resolved
     this.resolvedHouses[houseKey] = true;
@@ -354,6 +417,24 @@ export default class GameScene extends Phaser.Scene {
   isHouseFailed(houseKey) {
     // Check if the house has failed
     return this.failedHouses[houseKey] === true;
+  }
+  setHouseEncrypted(houseKey) {
+    // Mark the house as encrypted
+    this.encryptedHouses[houseKey] = true;
+    this.filesEncrypted = true;
+  }
+
+  isHouseEncrypted(houseKey) {
+    return this.encryptedHouses[houseKey] === true;
+  }
+
+  areFilesEncrypted() {
+    // Check if the files are encrypted to avoid re-encryption
+    return this.filesEncrypted;
+  }
+
+  setFilesEncrypted(value) {
+    this.filesEncrypted = value;
   }
   // Show messages for different scenarios
   showRiddleSolvedMessage() {
@@ -507,7 +588,27 @@ export default class GameScene extends Phaser.Scene {
       veil.destroy();
     });
   }
+  // TEMPORAYYYYYY VERY SHAMEFUL MESSAGE THAT NEEDS TO BE CHANGED
+  showNeedsMoreKeysMessage() {
+    const message = this.add
+      .text(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        "You need at least 4 keys to enter.",
+        {
+          fontSize: "32px",
+          fill: "#fff",
+          backgroundColor: "#000",
+        }
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(10000);
 
+    this.time.delayedCall(2000, () => {
+      message.destroy();
+    });
+  }
   // Create player animations for each direction and set the frame rate
   createPlayerAnimation(direction) {
     try {
