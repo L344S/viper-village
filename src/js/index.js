@@ -16,6 +16,7 @@ import IntroScene from "./scenes/intro-scene.js";
 import GameScene from "./scenes/game-scene.js";
 import PurpleHouseRiddleScene from "./scenes/purple-house-riddle.js";
 import GreenHouseRiddleScene from "./scenes/green-house-riddle.js";
+import TowerScene from "./scenes/tower-scene.js";
 import MenuScene from "./scenes/menu-scene.js";
 import EndScene from "./scenes/end-scene.js";
 
@@ -41,6 +42,7 @@ const config = {
     GameScene,
     PurpleHouseRiddleScene,
     GreenHouseRiddleScene,
+    TowerScene,
     MenuScene,
     EndScene,
   ],
