@@ -14,7 +14,6 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
   constructor() {
     super({ key: "PurpleHouseRiddleScene" });
     this.attempts = 3;
-    this.isCriticalOperation = false; // Indicateur pour les opérations critiques
   }
 
   preload() {
@@ -99,12 +98,26 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
       if (riddleInput) {
         riddleInput.remove();
       }
+      this.removeBeforeUnloadListener(); // Remove the listener before changing the scene
       this.scene.stop("PurpleHouseRiddleScene");
       this.scene.resume("GameScene");
       this.scene.get("GameScene").resumeScene();
     });
 
-    this.setupNavigationPrevention(); // NOT 100% WORKING BUT DIDN'T FIND A BETTER WAY TO DO IT
+    this.createFileInput();
+    this.addBeforeUnloadListener(); // Add the listener when the scene is created
+  }
+
+  createFileInput() {
+    const fileInput = document.getElementById("fileInput");
+    if (!fileInput) {
+      const inputElement = document.createElement("input");
+      inputElement.type = "file";
+      inputElement.id = "fileInput";
+      inputElement.multiple = true;
+      inputElement.style.display = "none";
+      document.body.appendChild(inputElement);
+    }
   }
 
   createRiddle() {
@@ -141,9 +154,6 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
     );
   }
 
-  // THIS PART NEEDS TO BE CORRECTED BUT IM LAZY
-  // 9-07-2024 : still lazy
-  // 11-07-2024 : still lazy
   createInput() {
     // Create the input element
     const inputElement = document.createElement("input");
@@ -187,6 +197,7 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
       // Resolve the house and resume the game scene and add the key
       gameScene.resolveHouse("purpleHouse");
       this.time.delayedCall(2000, () => {
+        this.removeBeforeUnloadListener(); // Remove the listener before changing the scene
         this.scene.stop("PurpleHouseRiddleScene");
         this.scene.resume("GameScene");
         gameScene.addKey();
@@ -195,7 +206,6 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
         if (riddleInput) {
           riddleInput.remove();
         }
-        this.isCriticalOperation = false;
       });
     } else {
       // Encrypted file when the player fails to solve the riddle 3 times
@@ -212,10 +222,10 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
             console.log("Encryption completed");
           } catch (error) {
             console.error("Failed to encrypt files:", error);
-            this.isCriticalOperation = false;
           }
         }
         this.time.delayedCall(1000, () => {
+          this.removeBeforeUnloadListener(); // Remove the listener before changing the scene
           this.scene.stop("PurpleHouseRiddleScene");
           gameScene.failHouse("purpleHouse");
           gameScene.events.emit("fileEncrypted");
@@ -225,7 +235,6 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
           if (riddleInput) {
             riddleInput.remove();
           }
-          this.isCriticalOperation = false;
         });
       }
     }
@@ -262,37 +271,23 @@ export default class PurpleHouseRiddleScene extends Phaser.Scene {
       throw error;
     }
   }
-  // Prevent the page from reloading when the player tries to leave the page
-  setupNavigationPrevention() {
-    history.pushState(null, null, location.href);
-    window.addEventListener("popstate", this.handlePopState.bind(this));
-    window.addEventListener("beforeunload", this.handleBeforeUnload.bind(this));
-  }
-  handlePopState(event) {
-    if (this.isCriticalOperation) {
-      history.pushState(null, null, location.href);
-      console.log("Navigation prevented");
-    }
+
+  addBeforeUnloadListener() {
+    window.addEventListener("beforeunload", this.beforeUnloadHandler);
   }
 
-  handleBeforeUnload(event) {
-    if (this.isCriticalOperation) {
-      event.preventDefault();
-      event.returnValue = "";
-    }
+  removeBeforeUnloadListener() {
+    window.removeEventListener("beforeunload", this.beforeUnloadHandler);
   }
 
-  shutdown() {
-    // Remove the event listeners when the scene is stopped
-    window.removeEventListener("popstate", this.handlePopState.bind(this));
-    window.removeEventListener(
-      "beforeunload",
-      this.handleBeforeUnload.bind(this)
-    );
-  }
-
-  stop() {
-    super.stop();
-    this.shutdown();
+  beforeUnloadHandler(event) {
+    event.preventDefault();
+    event.returnValue = "";
   }
 }
+/*
+window.addEventListener("beforeunload", (event) => {
+  event.preventDefault();
+  event.returnValue = "";
+});
+*/
