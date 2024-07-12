@@ -19,21 +19,22 @@ export default class MenuScene extends Phaser.Scene {
   preload() {
     try {
       // Load all assets for the pause menu
-      this.load.image(
-        "menuBoard",
-        "../../assets/visual/scenes/menu-board-background.png"
-      );
+      this.load.image("menuBoard", "../../assets/visual/scenes/menu-board.png");
       this.load.image(
         "playButton",
-        "../../assets/visual/buttons/play-button.png"
+        "../../assets/visual/buttons/play-button1.png"
       );
       this.load.image(
         "homeButton",
-        "../../assets/visual/buttons/home-button.png"
+        "../../assets/visual/buttons/home-button2.png"
+      );
+      this.load.image(
+        "musicButton",
+        "../../assets/visual/buttons/music-button.png"
       );
       this.load.image(
         "exitButton",
-        "../../assets/visual/buttons/exit-button.png"
+        "../../assets/visual/buttons/exit-button2.png"
       );
     } catch (error) {
       // If an asset fails to load, throw an error
@@ -58,7 +59,7 @@ export default class MenuScene extends Phaser.Scene {
           this.cameras.main.width,
           this.cameras.main.height,
           0x000000,
-          0.2
+          0.3
         )
         .setOrigin(0.5);
 
@@ -66,7 +67,7 @@ export default class MenuScene extends Phaser.Scene {
       const menuBoard = this.add
         .image(
           this.cameras.main.centerX,
-          this.cameras.main.centerY - 40,
+          this.cameras.main.centerY,
           "menuBoard"
         )
         .setScale(1.1);
@@ -76,7 +77,7 @@ export default class MenuScene extends Phaser.Scene {
       const playButton = this.add
         .image(
           this.cameras.main.centerX,
-          this.cameras.main.centerY - 115,
+          this.cameras.main.centerY - 65,
           "playButton"
         )
         .setScale(1)
@@ -99,7 +100,7 @@ export default class MenuScene extends Phaser.Scene {
       const homeButton = this.add
         .image(
           this.cameras.main.centerX,
-          this.cameras.main.centerY - 25,
+          this.cameras.main.centerY + 15,
           "homeButton"
         )
         .setScale(1)
@@ -115,11 +116,30 @@ export default class MenuScene extends Phaser.Scene {
         });
       });
 
+      const musicButton = this.add
+        .image(
+          this.cameras.main.centerX,
+          this.cameras.main.centerY + 90,
+          "musicButton"
+        )
+        .setScale(1)
+        .setInteractive();
+      if (!musicButton) throw new Error("Failed to load home button image");
+
+      // Add click event to the home button to return to the main menu with a fade effect
+      musicButton.on("pointerdown", () => {
+        this.cameras.main.fadeOut(500, 0, 0, 0);
+        this.cameras.main.once("camerafadeoutcomplete", () => {
+          this.scene.stop("GameScene");
+          this.scene.start("IntroScene");
+        });
+      });
+
       // Draw the exit button image and set its dimensions
       const exitButton = this.add
         .image(
           this.cameras.main.centerX,
-          this.cameras.main.centerY + 155,
+          this.cameras.main.centerY + 167,
           "exitButton"
         )
         .setScale(1)
