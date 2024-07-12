@@ -24,9 +24,9 @@ canvas {
   border-radius: 4px;
   box-sizing: border-box;
   position: absolute;
-  /* top: 645px; */
-  /* VM SETTING */
-  top: 573px;
+  top: 645px;
+  /* VM SETTING
+  top: 573px;*/
   left: 610px;
   width: 195px;
   height: 29px;
