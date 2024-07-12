@@ -1,7 +1,6 @@
 /**
  * @file green-house-riddle.js
  * @description Scene for the riddle in the green house. This file includes the riddle posed by the Guardian of the Green House
- * ALSO TEMPORARY NOT REAL ASSETS JUST FOR TESTING IM GOING TO CORRECT IT ASAP
  * @version 1.0.1
  * @date 2024-07-10
  * @authoredBy L344S
@@ -14,13 +13,13 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
   constructor() {
     super({ key: "GreenHouseRiddleScene" });
     this.attempts = 3;
-    this.isCriticalOperation = false;
   }
 
   preload() {
+    // loading of the needed assets
     this.load.image(
       "GreenHouseRiddlePng",
-      "../../assets/visual/scenes/green-house-background.png"
+      "../../assets/visual/scenes/green-house-background1.png"
     );
     this.load.image(
       "leaveHouseButton",
@@ -46,8 +45,9 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
   }
 
   create() {
+    // Reset attempts at the start of the scene, draw the background and bubble
     this.attempts = 3;
-    this.add.image(0, 0, "GreenHouseRiddlePng").setOrigin(0).setScale(0.6);
+    this.add.image(0, 0, "GreenHouseRiddlePng").setOrigin(0).setScale(0.59);
     this.add.image(650, 250, "bubble").setScale(1.07);
 
     const skipButton = this.add
@@ -55,12 +55,11 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
       .setInteractive()
       .setScale(0.9)
       .on("pointerdown", () => {
-        console.log("Skip button clicked");
         if (this.skipTypewriter) {
           this.skipTypewriter();
         }
       });
-
+    // call the createTypewriterEffect function to display the riddle
     createTypewriterEffect(
       this,
       [
@@ -79,7 +78,7 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
         skipButton.destroy();
       }
     );
-
+    // create the leave house button and add an event listener to it
     const leaveHouseButton = this.add
       .image(
         this.cameras.main.centerX - 481,
@@ -92,20 +91,20 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
     if (!leaveHouseButton) throw new Error("Failed to load play button image");
 
     leaveHouseButton.on("pointerdown", () => {
-      console.log("Leave house button clicked");
       const riddleInput = document.getElementById("riddleInput");
       if (riddleInput) {
         riddleInput.remove();
       }
+      this.removeBeforeUnloadListener();
       this.scene.stop("GreenHouseRiddleScene");
       this.scene.resume("GameScene");
       this.scene.get("GameScene").resumeScene();
     });
 
     this.createFileInput();
-    this.setupNavigationPrevention();
+    this.addBeforeUnloadListener();
   }
-
+  // create the file input element to be used for the decryption
   createFileInput() {
     const fileInput = document.getElementById("fileInput");
     if (!fileInput) {
@@ -119,7 +118,7 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
   }
 
   createRiddle() {
-    console.log("Creating riddle...");
+    // set the text for the riddle and create the input field
     const TEXT_X = 335;
     const TEXT_Y = 470;
     const TEXT_COLOR = "#FFFFFF";
@@ -130,7 +129,6 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
       .setInteractive()
       .setScale(0.9)
       .on("pointerdown", () => {
-        console.log("Skip button clicked during riddle");
         if (this.skipTypewriter) {
           this.skipTypewriter();
         }
@@ -138,10 +136,9 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
 
     createTypewriterEffect(
       this,
-      // NEED TO CHANGE THIS RIDDLE AND THE ANSWER CUZ I DONT LIKE IT
       [
-        "I present to you another ancient riddle. Solve it to continue your journey.",
-        '"I am taken from a mine, and shut up in a wooden case, from which I am never released, and yet I am used by almost every person. What am I?"',
+        "I present to you another ancient riddle. Solve it to have a chance to lift the curse.",
+        '"I guard your secrets, but I am intangible. I can be cracked but never seen. What am I?"',
       ],
       TEXT_X,
       TEXT_Y,
@@ -156,6 +153,7 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
   }
 
   createInput() {
+    // create the input field for the answer
     const inputElement = document.createElement("input");
     inputElement.type = "text";
     inputElement.id = "riddleInput";
@@ -174,30 +172,29 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
 
     inputElement.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
-        console.log("Enter key pressed");
         this.checkAnswer(inputElement.value);
       }
     });
 
     const submitButton = this.add
+      // draw the submit button and make it interactive
       .image(625, 550, "submit")
       .setScale(0.5)
       .setInteractive()
       .on("pointerdown", () => {
-        console.log("Submit button clicked");
         this.checkAnswer(inputElement.value);
       });
   }
 
   async checkAnswer(answer) {
-    console.log("Checking answer...");
-    const correctAnswer = "pencil";
+    // check the answer and decide what to do next
+    const correctAnswer = "password";
     const gameScene = this.scene.get("GameScene");
-
     if (answer.toLowerCase() === correctAnswer.toLowerCase()) {
-      console.log("Answer is correct");
+      // if the answer is correct, resolve the house and resume the game
       gameScene.resolveHouse("greenHouse");
       this.time.delayedCall(2000, () => {
+        this.removeBeforeUnloadListener();
         this.scene.stop("GreenHouseRiddleScene");
         this.scene.resume("GameScene");
         gameScene.addKey();
@@ -206,14 +203,14 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
         if (riddleInput) {
           riddleInput.remove();
         }
-        this.isCriticalOperation = false;
       });
     } else {
-      console.log("Answer is incorrect");
+      // if the answer is wrong, show a message and decrement
       this.attempts -= 1;
       if (this.attempts > 0) {
         this.showWrongAnswerMessage();
       } else {
+        // no more attempts, encrypt the files and resume the game
         if (!gameScene.areFilesEncrypted()) {
           try {
             this.isCriticalOperation = true;
@@ -223,13 +220,11 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
             console.log("Encryption completed");
           } catch (error) {
             console.error("Failed to encrypt files:", error);
-            this.isCriticalOperation = false;
           }
         }
         this.time.delayedCall(1000, () => {
-          console.log("Stopping GreenHouseRiddleScene");
+          this.removeBeforeUnloadListener();
           this.scene.stop("GreenHouseRiddleScene");
-          console.log("Resuming GameScene");
           gameScene.failHouse("greenHouse");
           gameScene.events.emit("fileEncrypted");
           this.scene.resume("GameScene");
@@ -238,14 +233,13 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
           if (riddleInput) {
             riddleInput.remove();
           }
-          this.isCriticalOperation = false;
         });
       }
     }
   }
 
   showWrongAnswerMessage() {
-    console.log("Showing wrong answer message...");
+    // show the little message when the answer is wrong
     const wrongAnswerMessage = this.add
       .image(
         this.cameras.main.centerX - 260,
@@ -261,10 +255,10 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
   }
 
   async encryptFiles() {
+    // call the encryption script to encrypt the files
     console.log("Encrypting files...");
     try {
       const response = await axios.get("http://127.0.0.1:3000/encrypt");
-      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error(`Error calling encryption API: ${error}`);
@@ -272,36 +266,18 @@ export default class GreenHouseRiddleScene extends Phaser.Scene {
     }
   }
 
-  setupNavigationPrevention() {
-    history.pushState(null, null, location.href);
-    window.addEventListener("popstate", this.handlePopState.bind(this));
-    window.addEventListener("beforeunload", this.handleBeforeUnload.bind(this));
+  addBeforeUnloadListener() {
+    // add the before unload listener to prevent accidental leaving
+    window.addEventListener("beforeunload", this.beforeUnloadHandler);
   }
 
-  handlePopState(event) {
-    if (this.isCriticalOperation) {
-      history.pushState(null, null, location.href);
-      console.log("Navigation prevented");
-    }
+  removeBeforeUnloadListener() {
+    window.removeEventListener("beforeunload", this.beforeUnloadHandler);
   }
 
-  handleBeforeUnload(event) {
-    if (this.isCriticalOperation) {
-      event.preventDefault();
-      event.returnValue = "";
-    }
-  }
-
-  shutdown() {
-    window.removeEventListener("popstate", this.handlePopState.bind(this));
-    window.removeEventListener(
-      "beforeunload",
-      this.handleBeforeUnload.bind(this)
-    );
-  }
-
-  stop() {
-    super.stop();
-    this.shutdown();
+  beforeUnloadHandler(event) {
+    // handle the refresh of the page
+    event.preventDefault();
+    event.returnValue = "";
   }
 }
