@@ -83,7 +83,7 @@ export default class EndScene extends Phaser.Scene {
       .setInteractive();
     // Add click event to the webpage button to visit the project landing page
     webpageButton.on("pointerdown", () => {
-      window.location.href = "dont have one yet"; // add the project landing page URL when available
+      window.location.href = "https://viper-village-project.fr";
     });
 
     // Draw the GitHub button image and set its dimensions
