@@ -1,6 +1,9 @@
 /**
- * TEMPORARY JUST FOR TESTING NOT THE REAL SCENE
- * DONT PANIC
+ * @file TowerScene.js
+ * @description Scene for the tower in the game. This file includes the logic for the player to decrypt files.
+ * @version 1.0.1
+ * @date 2024-07-11
+ * @authoredBy L344S
  */
 export default class TowerScene extends Phaser.Scene {
   constructor() {
@@ -10,48 +13,43 @@ export default class TowerScene extends Phaser.Scene {
   preload() {
     this.load.image(
       "towerBackground",
-      "../../assets/visual/scenes/intro-background.png"
+      "../../assets/visual/scenes/tower-background.png"
+    );
+    this.load.image(
+      "decryptButton",
+      "../../assets/visual/buttons/decrypt-button.png"
     );
   }
 
   create() {
     this.add.image(0, 0, "towerBackground").setOrigin(0).setScale(1);
-
-    const decryptionMessage = this.add
-      .text(
-        this.cameras.main.centerX,
-        this.cameras.main.centerY - 100,
-        "You have overcome the curse!",
-        { fontSize: "32px", fill: "#fff" }
-      )
-      .setOrigin(0.5);
-
+    // Draw the decryption button and make it interactive
     const decryptionButton = this.add
-      .text(
+      .image(
         this.cameras.main.centerX,
-        this.cameras.main.centerY,
-        "Decrypt Files",
-        { fontSize: "24px", fill: "#0f0" }
+        this.cameras.main.centerY + 110,
+        "decryptButton"
       )
       .setOrigin(0.5)
+      .setScale(1)
       .setInteractive();
 
     decryptionButton.on("pointerdown", async () => {
-      await this.decryptFiles();
-      this.add
-        .text(
-          this.cameras.main.centerX,
-          this.cameras.main.centerY + 100,
-          "Files Decrypted Successfully!",
-          { fontSize: "24px", fill: "#0f0" }
-        )
-        .setOrigin(0.5);
+      try {
+        const result = await this.decryptFiles();
+        // Log the result of the decryption if successful
+        console.log("Decryption successful:", result);
+      } catch (error) {
+        // Log an error if the decryption fails
+        console.error("Decryption failed:", error);
+      }
     });
   }
 
   async decryptFiles() {
     console.log("Decrypting files...");
     try {
+      // Call the decryption script to decrypt the files
       const response = await axios.get("http://127.0.0.1:3000/decrypt");
       console.log(response.data);
       return response.data;
@@ -60,18 +58,4 @@ export default class TowerScene extends Phaser.Scene {
       throw error;
     }
   }
-  //   preventNavigation() {
-  //     history.pushState(null, null, location.href);
-  //     window.addEventListener('popstate', this.preventNavigationHandler);
-  //   }
-
-  //   preventNavigationHandler(event) {
-  //     history.pushState(null, null, location.href);
-  //     console.log('Navigation prevented');
-  //   }
-
-  //   // Remove the event listener when the scene is stopped
-  //   shutdown() {
-  //     window.removeEventListener('popstate', this.preventNavigationHandler);
-  //   }
 }
