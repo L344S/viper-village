@@ -9,12 +9,14 @@
  * - Divide the game into multiple scenes for better organization and maintainability.
  * - Implement a intro scene to handle game start and the exit later.
  * - Implement a pause menu scene to handle game pausing and resuming.
+ * - Implement 3 house scenes and decryption scene.
  */
 
 // Imports
 import IntroScene from "./scenes/intro-scene.js";
 import GameScene from "./scenes/game-scene.js";
 import PurpleHouseRiddleScene from "./scenes/purple-house-riddle.js";
+import PinkHouseRiddleScene from "./scenes/pink-house-riddle.js";
 import GreenHouseRiddleScene from "./scenes/green-house-riddle.js";
 import TowerScene from "./scenes/tower-scene.js";
 import MenuScene from "./scenes/menu-scene.js";
@@ -41,6 +43,7 @@ const config = {
     IntroScene,
     GameScene,
     PurpleHouseRiddleScene,
+    PinkHouseRiddleScene,
     GreenHouseRiddleScene,
     TowerScene,
     MenuScene,
