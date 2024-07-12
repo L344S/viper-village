@@ -68,7 +68,7 @@ export default class IntroScene extends Phaser.Scene {
         });
       });
       // Fade in effect when the scene starts to make the transition smoother between scenes
-      this.cameras.main.fadeIn(500, 0, 0, 0);
+      //this.cameras.main.fadeIn(500, 0, 0, 0);
     } catch (error) {
       // If an element fails to create, throw an error
       console.error("Error during menu creation phase:", error);
