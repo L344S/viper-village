@@ -19,7 +19,7 @@ export default class GameScene extends Phaser.Scene {
   constructor() {
     // Set the unique key for the GameScene
     super({ key: "GameScene" });
-    this.keys = 4; // INITIALY SET TO 0 BUT TO TEST THE TOWER SCENE, IT WAS CHANGED TO 4
+    this.keys = 0;
     this.resolvedHouses = {};
     this.failedHouses = {};
     this.encryptedHouses = {};
@@ -97,7 +97,15 @@ export default class GameScene extends Phaser.Scene {
       );
       this.load.image(
         "fileEncrypted",
-        "../../assets/visual/windows/window-fileencrypted.png"
+        "../../assets/visual/windows/window-wrong-encryption.png"
+      );
+      this.load.image(
+        "needsMoreKeysImage",
+        "../../assets/visual/windows/window-needsmorekeys.png"
+      );
+      this.load.image(
+        "retryAnswer",
+        "../../assets/visual/windows/window-retryanswer.png"
       );
       this.load.image(
         "closeButton",
@@ -233,6 +241,31 @@ export default class GameScene extends Phaser.Scene {
       pinkHouseDoor.body.immovable = true;
       pinkHouseDoor.body.moves = false;
 
+      const handlePinkHouseOverlap = () => {
+        if (Phaser.Input.Keyboard.JustDown(this.keyE)) {
+          if (
+            !this.isHouseResolved("pinkHouse") &&
+            !this.isHouseFailed("pinkHouse")
+          ) {
+            this.cameras.main.fadeOut(800, 0, 0, 0);
+            this.time.delayedCall(800, () => {
+              this.scene.pause("GameScene");
+              this.scene.launch("PinkHouseRiddleScene");
+            });
+          } else if (this.isHouseFailed("pinkHouse")) {
+            this.showTrialFailedMessage();
+          } else {
+            this.showAlreadySolvedMessage();
+          }
+        }
+      };
+
+      this.physics.add.overlap(
+        this.player,
+        pinkHouseDoor,
+        handlePinkHouseOverlap
+      );
+
       const greenHouseDoor = this.add.rectangle(1050, 420, 44, 44, 0x000000, 0);
       this.physics.add.existing(greenHouseDoor);
       greenHouseDoor.body.immovable = true;
@@ -326,6 +359,10 @@ export default class GameScene extends Phaser.Scene {
 
       // Listen for the custom event "fileEncrypted" to show the file encrypted message
       this.events.on("fileEncrypted", this.showFileEncryptedMessage, this);
+      // Listen for the custom event "wrongAnswerRetry" to show the retry answer message
+      this.scene
+        .get("PurpleHouseRiddleScene")
+        .events.on("wrongAnswerRetry", this.showRetryAnswerMessage, this);
     } catch (error) {
       console.error("Error during game creation phase:", error);
     }
@@ -399,7 +436,7 @@ export default class GameScene extends Phaser.Scene {
   }
   // Flag to check if the player has enough keys to access the tower
   canAccessTower() {
-    return this.keys >= 4;
+    return this.keys >= 3;
   }
   resolveHouse(houseKey) {
     // Mark the house as resolved
@@ -529,8 +566,8 @@ export default class GameScene extends Phaser.Scene {
     trialFailedMessage.setDepth(10000);
     const closeButton = this.add
       .image(
-        this.cameras.main.centerX + 158, // Adjust position as needed
-        this.cameras.main.centerY - 145, // Adjust position as needed
+        this.cameras.main.centerX + 158,
+        this.cameras.main.centerY - 145,
         "closeButton"
       )
       .setScale(0.5)
@@ -572,8 +609,8 @@ export default class GameScene extends Phaser.Scene {
     fileEncryptedMessage.setDepth(10000);
     const closeButton = this.add
       .image(
-        this.cameras.main.centerX + 158, // Adjust position as needed
-        this.cameras.main.centerY - 145, // Adjust position as needed
+        this.cameras.main.centerX + 158,
+        this.cameras.main.centerY - 145,
         "closeButton"
       )
       .setScale(0.5)
@@ -588,25 +625,86 @@ export default class GameScene extends Phaser.Scene {
       veil.destroy();
     });
   }
-  // TEMPORAYYYYYY VERY SHAMEFUL MESSAGE THAT NEEDS TO BE CHANGED
-  showNeedsMoreKeysMessage() {
-    const message = this.add
-      .text(
+  showRetryAnswerMessage() {
+    // Show the retry answer message
+    const veil = this.add
+      .rectangle(
         this.cameras.main.centerX,
         this.cameras.main.centerY,
-        "You need at least 4 keys to enter.",
-        {
-          fontSize: "32px",
-          fill: "#fff",
-          backgroundColor: "#000",
-        }
+        this.cameras.main.width,
+        this.cameras.main.height,
+        0x000000,
+        0.2
       )
-      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(9999);
+
+    const retryAnswerMessage = this.add
+      .image(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        "retryAnswer"
+      )
+      .setScale(1)
+      .setScrollFactor(0);
+
+    retryAnswerMessage.setDepth(10000);
+
+    const closeButton = this.add
+      .image(
+        this.cameras.main.centerX + 158,
+        this.cameras.main.centerY - 145,
+        "closeButton"
+      )
+      .setScale(0.5)
+      .setScrollFactor(0)
+      .setDepth(10001)
+      .setInteractive();
+
+    closeButton.on("pointerdown", () => {
+      retryAnswerMessage.destroy();
+      closeButton.destroy();
+      veil.destroy();
+    });
+  }
+  showNeedsMoreKeysMessage() {
+    const veil = this.add
+      .rectangle(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        this.cameras.main.width,
+        this.cameras.main.height,
+        0x000000,
+        0.2
+      )
+      .setScrollFactor(0)
+      .setDepth(9999);
+
+    const messageImage = this.add
+      .image(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        "needsMoreKeysImage"
+      )
+      .setScale(1)
       .setScrollFactor(0)
       .setDepth(10000);
 
-    this.time.delayedCall(2000, () => {
-      message.destroy();
+    const closeButton = this.add
+      .image(
+        this.cameras.main.centerX + 158,
+        this.cameras.main.centerY - 145,
+        "closeButton"
+      )
+      .setScale(0.5)
+      .setScrollFactor(0)
+      .setDepth(10001)
+      .setInteractive();
+    // close the window when the close button is clicked
+    closeButton.on("pointerdown", () => {
+      messageImage.destroy();
+      closeButton.destroy();
+      veil.destroy();
     });
   }
   // Create player animations for each direction and set the frame rate
