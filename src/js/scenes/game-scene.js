@@ -19,7 +19,7 @@ export default class GameScene extends Phaser.Scene {
   constructor() {
     // Set the unique key for the GameScene
     super({ key: "GameScene" });
-    this.keys = 0;
+    this.keys = 1; // add the key cause there is not enough houses to get the keys
     this.resolvedHouses = {};
     this.failedHouses = {};
     this.encryptedHouses = {};
