@@ -3,10 +3,10 @@ import logging
 import shutil
 from cryptography.fernet import Fernet, InvalidToken
 
-noname_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+viper_village_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 # create a logs directory inside the noname directory if it doesn't exist
-log_directory = os.path.join(noname_directory, 'logs')
+log_directory = os.path.join(viper_village_directory, 'logs')
 if not os.path.exists(log_directory):
     os.makedirs(log_directory)
 log_file = os.path.join(log_directory, 'decryption_log.log')
