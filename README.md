@@ -39,7 +39,6 @@ It encrypts files on the user's system using a randomly generated key and the Fe
 
 ![Screenshot 1](assets/visual/docs/screenshot-1.png)
 ![Screenshot 2](assets/visual/docs/screenshot-2.png)
-![Texte alternatif](URL_de_l'image "Titre facultatif")
 
 ## Installation and Usage
 
