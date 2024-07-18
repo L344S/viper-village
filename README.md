@@ -181,7 +181,7 @@ If you have any questions or need further information, feel free to contact me a
 
 ## Authors
 
-- **Léa Sel**:
+- **Léa S.**:
   - [GitHub](https://github.com/L344S)
   - [LinkedIn](https://www.linkedin.com/in/léasel/)
 
