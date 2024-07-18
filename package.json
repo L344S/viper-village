@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "nodemon": "^2.0.15",
+    "axios": "^1.7.2",
+    "child_process": "^1.0.2",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "express": "^4.19.2",
+    "phaser": "^3.80.1"
+  },
+  "name": "viper-village",
+  "version": "1.0.0",
+  "description": "Viper village game",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/js/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": []
+}
