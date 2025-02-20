@@ -174,11 +174,6 @@ Here is the link to our Trello board to follow the future steps and project prog
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Contact
-
-If you have any questions or need further information, feel free to contact me at the provided email address.
-- Email: prosel.lea@gmail.com
-
 ## Authors
 
 - **Léa S.**:
